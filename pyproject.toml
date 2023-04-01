@@ -17,3 +17,4 @@ pandas = "*"
 [tool.poetry.dev-dependencies]
 black = "*"
 pre-commit = "*"
+pytest = "*"
