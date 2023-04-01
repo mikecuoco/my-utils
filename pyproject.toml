@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "my_utils"
+version = "0.1.0"
+description = "My convenience utilities"
+license = "MIT"
+authors = ["mcuoco@ucsd.edu"]
+repository = "https://github.com/mikecuoco/my_utils"
+readme = "README.md"
+packages = [
+	{ include = "my_utils" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+pandas = "*"
+
+[tool.poetry.dev-dependencies]
+black = "*"
+pre-commit = "*"
