@@ -32,7 +32,7 @@ jobs:
 
     - name: Style checks
       run: |
-        poetry pre-commit run --all-files
+        poetry run pre-commit run --all-files
 
     - name: Tests
       run: |
