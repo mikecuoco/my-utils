@@ -5,7 +5,7 @@ description = "My convenience utilities"
 authors = ["mikecuoco <mcuoco@ucsd.edu>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "my_utils"}]
+packages = [{include = "myutils"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
