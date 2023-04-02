@@ -1,3 +1,4 @@
+import gzip
 from math import log
 
 import pandas as pd
@@ -13,8 +14,13 @@ def calculate_age(milli_div, subsitution_rate=2.2):
 
 def read_rmsk(filename: str):
     # read first line to check if it is a valid rmsk file
-    with open(filename) as f:
-        line = f.readline()
+    if filename.endswith(".gz"):
+        with gzip.open(filename) as f:
+            line = f.readline()
+    else:
+        with open(filename) as f:
+            line = f.readline()
+
         assert (
             line
             == "   SW  perc perc perc  query      position in query           matching       repeat              position in  repeat\n"
