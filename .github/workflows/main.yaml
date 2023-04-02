@@ -1,9 +1,9 @@
-name: build
+name: Build-and-Test
 
 on: [push, pull_request]
 
 jobs:
-  Build-and-Test:
+  main:
     runs-on: ubuntu-latest
     strategy:
       matrix:
