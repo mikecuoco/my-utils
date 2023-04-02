@@ -1,6 +1,6 @@
 import pytest
 
-from my_utils.rmsk import read_rmsk
+from myutils.rmsk import read_rmsk
 
 
 def test_read_rmsk():

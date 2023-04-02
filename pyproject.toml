@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "my-utils"
+name = "myutils"
 version = "0.1.0"
 description = "My convenience utilities"
 authors = ["mikecuoco <mcuoco@ucsd.edu>"]
