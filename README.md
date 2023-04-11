@@ -6,8 +6,9 @@ Convenience utilities
 
 ## TODO:
 
-- [X] add read_rmsk
-- [X] add calculate_mya
-- [X] add precommit
-   - [X] add isort
+- [X] add `read_rmsk()`
+- [X] add `calculate_mya()`
+- [X] add `precommit`
+   - [X] add `isort`
 - [X] add automated testing and building with github actions
+- [ ] remove `git-lfs` dependency
