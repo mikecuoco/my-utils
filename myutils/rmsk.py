@@ -4,12 +4,16 @@ from math import log
 import pandas as pd
 
 
+# From https://github.com/MarioniLab/CELLOseq/blob/93ce4f3b86014df9348abab3fc2bcaa9620c3ff4/manuscript/python_files/calculate_TE_JCage.py
+# To calculate the TE age in million years of age (mya), we multiply the JC distance using the following formula:
+# (JC_distance * 100) / (subsitution_rate * 2 * 100) * 1000
+# For subsitution rate, we used 2.2 and 4.5 for human and mouse, according to Lander et al., 2001 and Waterston et al., 2002, respectively.
 def calculate_age(milli_div, subsitution_rate=2.2):
     p = milli_div / 1000  # The milliDiv column in the `rmsk.txt` file.
     p_part = (4 / 3) * p
     jc_dist = -0.75 * (log(1 - p_part))
-    (jc_dist * 100) / (subsitution_rate * 2 * 100) * 1000
-    return jc_dist
+    mya = (jc_dist * 100) / (subsitution_rate * 2 * 100) * 1000
+    return mya
 
 
 def read_rmsk(filename: str):
