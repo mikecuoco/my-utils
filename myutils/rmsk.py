@@ -8,10 +8,11 @@ import pandas as pd
 # To calculate the TE age in million years of age (mya), we multiply the JC distance using the following formula:
 # (JC_distance * 100) / (subsitution_rate * 2 * 100) * 1000
 # For subsitution rate, we used 2.2 and 4.5 for human and mouse, according to Lander et al., 2001 and Waterston et al., 2002, respectively.
+# Jukes-Cantor evolutionary distance https://en.wikipedia.org/wiki/Models_of_DNA_evolution#JC69_model_(Jukes_and_Cantor_1969)
 def calculate_age(milli_div, subsitution_rate=2.2):
-    p = milli_div / 1000  # The milliDiv column in the `rmsk.txt` file.
-    p_part = (4 / 3) * p
-    jc_dist = -0.75 * (log(1 - p_part)) # Jukes-Cantor evolutionary distance https://en.wikipedia.org/wiki/Models_of_DNA_evolution#JC69_model_(Jukes_and_Cantor_1969)
+    p = milli_div / 1000  # The milliDiv column in the `rmsk.txt` file. Used to calculate proportion of sites that differ between this seq and the consensus seq
+    p_part = (4 / 3) * p 
+    jc_dist = -0.75 * (log(1 - p_part)) 
     mya = (jc_dist * 100) / (subsitution_rate * 2 * 100) * 1000
     return mya
 
@@ -33,7 +34,7 @@ def read_rmsk(filename: str):
     # setup converter functions
     strand_conv = lambda x: "-" if x == "C" else "+"
     coord_conv = lambda x: int(x.rstrip(")").lstrip("("))
-    perc_conv = lambda x: float(x) * 10
+    perc_conv = lambda x: float(x) * 10``
 
     convs = {
         "milliDiv": perc_conv,
