@@ -11,7 +11,7 @@ import pandas as pd
 def calculate_age(milli_div, subsitution_rate=2.2):
     p = milli_div / 1000  # The milliDiv column in the `rmsk.txt` file.
     p_part = (4 / 3) * p
-    jc_dist = -0.75 * (log(1 - p_part))
+    jc_dist = -0.75 * (log(1 - p_part)) # Jukes-Cantor evolutionary distance https://en.wikipedia.org/wiki/Models_of_DNA_evolution#JC69_model_(Jukes_and_Cantor_1969)
     mya = (jc_dist * 100) / (subsitution_rate * 2 * 100) * 1000
     return mya
 
