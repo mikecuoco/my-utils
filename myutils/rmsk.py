@@ -32,10 +32,9 @@ def read_rmsk(filename: str):
             "SW",
             "perc",
             "query",
-            "position in query",
+            "position in",
             "matching",
             "repeat",
-            "position in repeat",
         ]:
             assert w in line, f"Not a valid rmsk file: {w} not found in first line"
 
