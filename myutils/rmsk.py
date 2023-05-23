@@ -76,6 +76,8 @@ def read_rmsk(filename: str):
             "id",
         ],
         converters=convs,
+        engine="python",
+        on_bad_lines=lambda x: x[:-1],
     )
 
     # split repClassFamily into repClass and repFamily on /
