@@ -81,8 +81,9 @@ def read_rmsk(filename: str):
     )
 
     # split repClassFamily into repClass and repFamily on /
-    df[["repClass", "repFamily"]] = df["repClassFamily"].str.split("/", expand=True)
-    df.drop("repClassFamily", axis=1, inplace=True)
+    if any([True for x in df["repClassFamily"].values if "/" in x]):
+        df[["repClass", "repFamily"]] = df["repClassFamily"].str.split("/", expand=True)
+        df.drop("repClassFamily", axis=1, inplace=True)
 
     # calculate length of each repeat
     df["length"] = df.apply(

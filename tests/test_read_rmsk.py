@@ -5,9 +5,6 @@ from myutils.rmsk import read_rmsk
 
 def read(file):
     df = read_rmsk(file)
-    assert df.shape[1] == 18, "Wrong number of columns"
-    assert "repClass" in df.columns, "repClass column not found"
-    assert "repFamily" in df.columns, "repFamily column not found"
     assert "length" in df.columns, "length column not found"
     assert "age" in df.columns, "age column not found"
 
@@ -19,5 +16,11 @@ def test_ucsc_rmsk():
 
 def test_read_rmsk():
     read("tests/rmsk.out")
+
+
+def test_read_rmsk_gz():
     read("tests/rmsk.out.gz")
+
+
+def test_read_rmsk_astrk():
     read("tests/rmsk_astrk.out")
