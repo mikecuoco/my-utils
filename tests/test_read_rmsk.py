@@ -20,3 +20,4 @@ def test_ucsc_rmsk():
 def test_read_rmsk():
     read("tests/rmsk.out")
     read("tests/rmsk.out.gz")
+    read("tests/rmsk_astrk.out")
