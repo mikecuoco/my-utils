@@ -28,10 +28,16 @@ def read_rmsk(filename: str):
         with open(filename) as f:
             line = f.readline()
 
-        assert (
-            line
-            == "   SW  perc perc perc  query      position in query           matching       repeat              position in  repeat\n"
-        ), "Not a valid rmsk file"
+        for w in [
+            "SW",
+            "perc",
+            "query",
+            "position in query",
+            "matching",
+            "repeat",
+            "position in repeat",
+        ]:
+            assert w in line, f"Not a valid rmsk file: {w} not found in first line"
 
     # setup converter functions
     strand_conv = lambda x: "-" if x == "C" else "+"
