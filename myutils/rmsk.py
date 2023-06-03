@@ -21,22 +21,17 @@ def calculate_age(milli_div, subsitution_rate=2.2):
 
 def read_rmsk(filename: str):
     # read first line to check if it is a valid rmsk file
-    if filename.endswith(".gz"):
-        with gzip.open(filename) as f:
-            line = f.readline()
-    else:
-        with open(filename) as f:
-            line = f.readline()
+    line = pd.read_csv(filename, nrows=1, header=None).values[0][0]
 
-        for w in [
-            "SW",
-            "perc",
-            "query",
-            "position in",
-            "matching",
-            "repeat",
-        ]:
-            assert w in line, f"Not a valid rmsk file: {w} not found in first line"
+    for w in [
+        "SW",
+        "perc",
+        "query",
+        "position in",
+        "matching",
+        "repeat",
+    ]:
+        assert w in line, f"Not a valid rmsk file: {w} not found in first line"
 
     # setup converter functions
     strand_conv = lambda x: "-" if x == "C" else "+"

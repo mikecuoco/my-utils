@@ -24,3 +24,8 @@ def test_read_rmsk_gz():
 
 def test_read_rmsk_astrk():
     read("tests/rmsk_astrk.out")
+
+
+def test_read_rmsk_url():
+    # use fruit fly as a test case
+    read("https://hgdownload.soe.ucsc.edu/goldenPath/dm6/bigZips/dm6.fa.out.gz")
