@@ -1,4 +1,3 @@
-import gzip
 from math import log
 
 import pandas as pd
