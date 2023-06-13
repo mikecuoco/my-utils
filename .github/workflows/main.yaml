@@ -27,11 +27,13 @@ jobs:
         path: .venv
         key: venv-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('poetry.lock') }}
 
+    - name: Install bedtools
+    - run: apt-get install bedtools
+    
     - name: Install dependencies
       run: |
         poetry config virtualenvs.in-project true
         poetry install
-        apt-get install bedtools
 
     - name: Style checks
       run: |
