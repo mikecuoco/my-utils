@@ -18,6 +18,21 @@ def calculate_age(milli_div, subsitution_rate=2.2):
     return mya
 
 
+def has_promoter(x):
+    "test if rmsk element has a promoter"
+    assert x.repFamily in ["L1", "Alu"], "repFamily must be L1 or Alu"
+
+    if x.repFamily == "L1":
+        thresh = 125
+    elif x.repFamily == "Alu":
+        thresh = 70
+
+    if x.Strand == "+":
+        return x.repStart < thresh
+    elif x.Strand == "-":
+        return x.repLeft < thresh
+
+
 def read_rmsk(filename: str):
     # read first line to check if it is a valid rmsk file
     line = pd.read_csv(filename, nrows=1, header=None).values[0][0]
