@@ -28,9 +28,9 @@ def has_promoter(x):
     elif x.repFamily == "Alu":
         thresh = 70
 
-    if x.Strand == "+":
+    if x.strand == "+":
         return x.repStart < thresh
-    elif x.Strand == "-":
+    elif x.strand == "-":
         return x.repLeft < thresh
 
 
