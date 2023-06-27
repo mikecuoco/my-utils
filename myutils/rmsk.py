@@ -1,3 +1,4 @@
+import logging
 from math import log
 
 import pandas as pd
@@ -63,6 +64,7 @@ def read_rmsk(filename: str):
     }
 
     # read the rmsk file
+    logging.info(f"Reading RepeatMasker file: {filename}")
     df = pd.read_csv(
         filename,
         skiprows=3,
@@ -103,6 +105,13 @@ def read_rmsk(filename: str):
     )
 
     # calculate age of each repeat
+    logging.info("Calculating evolutionary age of each repeat")
     df["age"] = df["milliDiv"].apply(calculate_age)
+
+    # calculate promoter status
+    logging.info("Calculating promoter status of L1 and Alu repeats")
+    df.loc[df["repFamily"].isin(["Alu", "L1"]), "has_promoter"] = df[
+        df["repFamily"].isin(["Alu", "L1"])
+    ].apply(has_promoter, axis=1)
 
     return df
