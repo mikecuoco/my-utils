@@ -1,4 +1,5 @@
 import logging
+import pdb
 from math import log
 
 import pandas as pd
@@ -110,8 +111,9 @@ def read_rmsk(filename: str):
 
     # calculate promoter status
     logging.info("Calculating promoter status of L1 and Alu repeats")
-    df.loc[df["repFamily"].isin(["Alu", "L1"]), "has_promoter"] = df[
-        df["repFamily"].isin(["Alu", "L1"])
-    ].apply(has_promoter, axis=1)
+    if "repFamily" in df.columns:
+        df.loc[df["repFamily"].isin(["Alu", "L1"]), "has_promoter"] = df[
+            df["repFamily"].isin(["Alu", "L1"])
+        ].apply(has_promoter, axis=1)
 
     return df
