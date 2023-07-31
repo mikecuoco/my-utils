@@ -12,13 +12,32 @@ def load_tetranscripts(
     rmsk_gtf: str,
     rmsk_out: str,
 ):
+    """
+    Load TEtranscripts results into an AnnData object
+    :param te_counts: TEtranscripts counts table (columns are samples, rows are genes/TEs)
+    :param coldata: TEtranscripts coldata table
+    :param gene_gtf: GTF file with gene annotations
+    :param rmsk_gtf: GTF file with TE annotations
+    :param rmsk_out: RepeatMasker output file
+    """
+
     assert (
         "condition" in coldata.columns
     ), "coldata must have a column named 'condition'"
 
     # gene info
     print(f"Reading gene GTF from {gene_gtf}...")
-    gtf = pr.read_gtf(gene_gtf).df
+    gtf = pr.read_gtf(gene_gtf)
+
+    # check if GENCODE
+    if "gene" in gtf.Feature.unique():
+        gtf = gtf.df
+    else:
+        genes = gtf.boundaries("gene_id").df
+        genes["Feature"] = "gene"
+        genes["Source"] = "refGene"
+        gtf = pd.concat([gtf.df, genes]).sort_values(["Chromosome", "Start"])
+        gtf = gtf.fillna(".")
     gtf = gtf[gtf.Feature == "gene"].set_index("gene_id")  # get genes only
 
     # te info
@@ -46,6 +65,7 @@ def load_tetranscripts(
     var_data = pd.concat([gtf, rmsk])
 
     # put everything together
+    te_counts = te_counts.T
     adata = AnnData(
         X=te_counts,
         dtype=te_counts.values.dtype,
