@@ -31,7 +31,6 @@ jobs:
       run: |
         poetry config virtualenvs.in-project true
         poetry install
-        sudo apt-get install -y bedtools
 
     - name: Style checks
       run: |
