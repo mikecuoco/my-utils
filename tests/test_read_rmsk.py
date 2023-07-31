@@ -11,19 +11,19 @@ def read(file):
 
 def test_ucsc_rmsk():
     with pytest.raises(AssertionError) as e:
-        df = read_rmsk("tests/rmsk.ucsc.txt")
+        df = read_rmsk("tests/data/rmsk.ucsc.txt")
 
 
 def test_read_rmsk():
-    read("tests/rmsk.out")
+    read("tests/data/rmsk.out")
 
 
 def test_read_rmsk_gz():
-    read("tests/rmsk.out.gz")
+    read("tests/data/rmsk.out.gz")
 
 
 def test_read_rmsk_astrk():
-    read("tests/rmsk_astrk.out")
+    read("tests/data/rmsk_astrk.out")
 
 
 def test_read_rmsk_url():

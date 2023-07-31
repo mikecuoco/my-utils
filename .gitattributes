@@ -1,3 +1,8 @@
-tests/rmsk.out filter=lfs diff=lfs merge=lfs -text
-tests/rmsk.ucsc.txt filter=lfs diff=lfs merge=lfs -text
-tests/rmsk.out.gz filter=lfs diff=lfs merge=lfs -text
+tests/data/res.cntTable filter=lfs diff=lfs merge=lfs -text
+tests/data/rmsk.gtf filter=lfs diff=lfs merge=lfs -text
+tests/data/rmsk.out filter=lfs diff=lfs merge=lfs -text
+tests/data/rmsk.out.gz filter=lfs diff=lfs merge=lfs -text
+tests/data/rmsk.ucsc.txt filter=lfs diff=lfs merge=lfs -text
+tests/data/rmsk_astrk.out filter=lfs diff=lfs merge=lfs -text
+tests/data/coldata.csv filter=lfs diff=lfs merge=lfs -text
+tests/data/refgene.gtf filter=lfs diff=lfs merge=lfs -text
