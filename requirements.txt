@@ -1,6 +1,9 @@
 anndata==0.9.2 ; python_version >= "3.8" and python_version < "4.0" \
     --hash=sha256:badab44bf0b4d598ae49403ee634a6ffc8896d9aa21db52f0f6af98d6fe1fceb \
     --hash=sha256:e5b8383d09723af674cae7ad0c2ef53eb1f8c73949b7f4c182a6e30f42196327
+git-lfs==1.6 ; python_version >= "3.8" and python_version < "4.0" \
+    --hash=sha256:2fecacaefc93ab278933b7755d4a48972f0deca7f9ff27439594ad835decf8ed \
+    --hash=sha256:93a5e8a2bf71d66a9a5bae0d28c8137dd40c108dc3e1031fa6d30511794fae3a
 h5py==3.9.0 ; python_version >= "3.8" and python_version < "4.0" \
     --hash=sha256:12aa556d540f11a2cae53ea7cfb94017353bd271fb3962e1296b342f6550d1b8 \
     --hash=sha256:23e74b878bbe1653ab34ca49b83cac85529cd0b36b9d625516c5830cc5ca2eac \
