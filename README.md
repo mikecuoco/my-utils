@@ -17,11 +17,11 @@ Developing using poetry
 Before pushing...
 
 ```bash
-# install the package
-poetry install
+# install pre-commit hooks
+pre-commit install
 
-# run pre-commit hooks
-poetry run pre-commit run --all-files
+# install the package
+poetry install --verbose
 
 # run tests
 poetry run pytest
