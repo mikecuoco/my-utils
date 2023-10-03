@@ -35,10 +35,6 @@ jobs:
         poetry config virtualenvs.in-project true
         poetry install --with dev
 
-    - name: Style checks
-      run: |
-        poetry run pre-commit run --all-files
-
     - name: Tests
       run: |
         poetry run pytest
