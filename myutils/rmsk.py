@@ -39,7 +39,6 @@ def read_rmsk(filename: str):
     line = pd.read_csv(filename, nrows=1, header=None).values[0][0]
 
     for w in [
-        "SW",
         "perc",
         "query",
         "position in",
