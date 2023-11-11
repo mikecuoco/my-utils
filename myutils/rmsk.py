@@ -1,6 +1,7 @@
 import logging
 from math import log
 
+import numpy as np
 import pandas as pd
 
 
@@ -20,18 +21,42 @@ def calculate_age(milli_div, subsitution_rate=2.2):
 
 
 def has_promoter(x):
-    "test if rmsk element has a promoter"
-    assert x.repFamily in ["L1", "Alu"], "repFamily must be L1 or Alu"
+    """
+    test if rmsk element has a promoter
+    only works for human
+    """
 
     if x.repFamily == "L1":
         thresh = 125
     elif x.repFamily == "Alu":
         thresh = 70
+    elif x.repFamily == "SVA":
+        thresh = 70
+    else:
+        return np.nan
 
     if x.strand == "+":
         return x.repStart < thresh
     elif x.strand == "-":
         return x.repLeft < thresh
+
+
+def is_full_length(x):
+    """
+    test if rmsk element is full length
+    only works for human
+    """
+
+    if x.repFamily == "L1":
+        thresh = 5000
+    elif x.repFamily == "Alu":
+        thresh = 250
+    elif x.repFamily == "SVA":
+        thresh = 600
+    else:
+        return np.nan
+
+    return x.length > thresh
 
 
 def read_rmsk(filename: str):
@@ -93,7 +118,10 @@ def read_rmsk(filename: str):
     # split repClassFamily into repClass and repFamily on /
     if any([True for x in df["repClassFamily"].values if "/" in x]):
         df[["repClass", "repFamily"]] = df["repClassFamily"].str.split("/", expand=True)
-        df.drop("repClassFamily", axis=1, inplace=True)
+    else:
+        df["repClass"] = df["repClassFamily"]
+        df["repFamily"] = None
+    df.drop("repClassFamily", axis=1, inplace=True)
 
     # calculate length of each repeat
     df["length"] = df.apply(
@@ -109,9 +137,8 @@ def read_rmsk(filename: str):
 
     # calculate promoter status
     logging.info("Calculating promoter status of L1 and Alu repeats")
-    if "repFamily" in df.columns:
-        df.loc[df["repFamily"].isin(["Alu", "L1"]), "has_promoter"] = df[
-            df["repFamily"].isin(["Alu", "L1"])
-        ].apply(has_promoter, axis=1)
+
+    df["has_promoter"] = df.apply(has_promoter, axis=1)
+    df["is_full_length"] = df.apply(is_full_length, axis=1)
 
     return df

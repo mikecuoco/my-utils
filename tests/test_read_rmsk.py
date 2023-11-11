@@ -7,6 +7,8 @@ def read(file):
     df = read_rmsk(file)
     assert "length" in df.columns, "length column not found"
     assert "age" in df.columns, "age column not found"
+    assert "is_full_length" in df.columns, "is_full_length column not found"
+    assert "has_promoter" in df.columns, "has_promoter column not found"
 
 
 def test_ucsc_rmsk():
