@@ -31,3 +31,4 @@ poetry run pytest
 ## TODO:
 
 - [ ] Add `load_l1em()`
+- [ ] Handle Hmmer RepeatMasker output
