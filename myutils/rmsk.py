@@ -48,7 +48,7 @@ def is_full_length(x):
     """
 
     if x.repFamily == "L1":
-        thresh = 5000
+        thresh = 6000
     elif x.repFamily == "Alu":
         thresh = 250
     elif x.repFamily == "SVA":
