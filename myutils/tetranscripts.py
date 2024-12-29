@@ -37,7 +37,6 @@ def load_tetranscripts(
         genes["Feature"] = "gene"
         genes["Source"] = "refGene"
         gtf = pd.concat([gtf.df, genes]).sort_values(["Chromosome", "Start"])
-        gtf = gtf.fillna(".")
     gtf = gtf[gtf.Feature == "gene"].set_index("gene_id")  # get genes only
 
     # te info
@@ -45,14 +44,14 @@ def load_tetranscripts(
     print(f"Reading RepeatMasker output from {rmsk_out}...")
     rmsk = read_rmsk(rmsk_out)
     rmsk["gene_id"] = rmsk["repName"] + ":" + rmsk["repFamily"] + ":" + rmsk["repClass"]
-    avg_age = rmsk[["age", "gene_id"]].groupby("gene_id").mean()
+    avg_age = rmsk[["age", "gene_id"]].groupby("gene_id", observed=True).mean()
 
     # read in rmsk gtf
     print(f"Reading TE GTF from {rmsk_gtf}...")
     rmsk = pr.read_gtf(rmsk_gtf).df
     rmsk["subfamily_id"] = rmsk["gene_id"]
     rmsk["gene_id"] = rmsk["gene_id"] + ":" + rmsk["family_id"] + ":" + rmsk["class_id"]
-    n_copies = rmsk[["transcript_id", "gene_id"]].groupby("gene_id").size()
+    n_copies = rmsk[["transcript_id", "gene_id"]].groupby("gene_id", observed=True).size()
     rmsk = (
         rmsk[["gene_id", "subfamily_id", "family_id", "class_id"]]
         .drop_duplicates()

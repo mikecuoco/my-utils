@@ -92,7 +92,7 @@ def read_rmsk(filename: str):
     df = pd.read_csv(
         filename,
         skiprows=3,
-        delim_whitespace=True,
+        sep="\s+",
         names=[
             "swScore",
             "milliDiv",
