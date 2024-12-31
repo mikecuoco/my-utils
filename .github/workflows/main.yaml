@@ -127,7 +127,7 @@ jobs:
           cmd: |
             yq -i '.context.version = "${{ env.version }}"' '${{ env.file }}'
             yq -i '.source.url = "${{ steps.upload_release_asset.outputs.browser_download_url }}"' '${{ env.file }}'
-            yq -i '.source.sha256 = "${{ hashFiles('dist/myutils*tar.gz') }}"' '${{ env.file }}'
+            yq -i ".source.sha256 = \"$(sha256sum dist/myutils-${{ env.version }}.tar.gz | cut -d' ' -f1)\"" '${{ env.file }}'
 
       - name: Build conda package
         uses: prefix-dev/rattler-build-action@v0.2.25
