@@ -127,7 +127,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: dist/myutils-${{ env.version }}.tar.gz
-          asset_name: myutils-${{ env.version }}.tar.gz
+          asset_name: release
           asset_content_type: application/gzip
 
       - name: Set Output
@@ -149,8 +149,8 @@ jobs:
         - name: Download asset
           uses: actions/download-artifact@v3
           with:
-            path: myutils-${{ needs.build_release.outputs.version }}.tar.gz
-            name: myutils-${{ needs.build_release.outputs.version }}.tar.gz
+            name: release
+            path: "myutils-${{ needs.build_release.outputs.version }}.tar.gz"
 
         - name: Update recipe.yaml
           uses: mikefarah/yq@master
