@@ -39,7 +39,7 @@ jobs:
     - name: Install dependencies
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: |
-        poetry install --no-root
+        poetry install
 
     - name: Run Tests
       run: |
@@ -72,9 +72,16 @@ jobs:
         virtualenvs-path: .venv
         installer-parallel: true
 
-    - name: Reuse setup from previous job
+    - name: Load venv cache
+      id: cached-poetry-dependencies
+      uses: actions/cache@v4
+      with:
+        path: .venv
+        key: venv-${{ steps.get_python_version.outputs.python_version }}-${{ hashFiles('poetry.lock') }}
+
+    - name: Install dependencies
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: |
-        poetry config virtualenvs.in-project true
         poetry install
 
     - name: Extract version from pyproject.toml
@@ -137,3 +144,4 @@ jobs:
         git config --global user.name "GitHub Actions"
         git add recipe.yaml
         git commit -m "Update recipe.yaml with new release"
+        git push
