@@ -4,8 +4,8 @@ package:
   name: myutils
   version: ${{ version }}
 source:
-  url: https://github.com/mikecuoco/myutils/releases/download/86/myutils-0.1.0.tar.gz
-  sha256: "e1a31c5684ce11dbef9c333c54ed7252dba764ba1a1051e7954e6a3188cce505"
+  url: https://github.com/mikecuoco/myutils/releases/download/98/myutils-0.1.0.tar.gz
+  sha256: "ea8ccfac2262023cb16d451273b0d578655cc358f338bec7e8064e8493a28ff8"
 build:
   noarch: python
   script: poetry install --no-dev
