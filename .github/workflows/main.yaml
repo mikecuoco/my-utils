@@ -100,6 +100,8 @@ jobs:
           gh release create ${{ github.run_number }} dist/*tar.gz --notes "Release ${{ env.version }}" --title "Release ${{ env.version }}"
           url=$(gh api /repos/${{ github.repository }}/releases/tags/${{ github.run_number }} | jq -r '.assets[].browser_download_url')
           echo "browser_download_url=$url" >> $GITHUB_ENV
+          sha=$(curl -L $url | sha256sum | cut -d ' ' -f 1)
+          echo "sha256=$sha" >> $GITHUB_ENV
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -111,7 +113,7 @@ jobs:
           cmd: |
             yq -i '.context.version = "${{ env.version }}"' '${{ env.file }}'
             yq -i '.source.url = "${{ env.browser_download_url }}"' '${{ env.file }}'
-            yq -i '.source.sha256 = "${{ hashFiles('dist/myutils*tar.gz') }}"' '${{ env.file }}'
+            yq -i '.source.sha256 = "${{ env.sha }}"' '${{ env.file }}'
 
       - name: Build conda package
         uses: prefix-dev/rattler-build-action@v0.2.25
