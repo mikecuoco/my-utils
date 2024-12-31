@@ -49,20 +49,17 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup_test
     if: github.ref == 'refs/heads/main'
+    env:
+      python-version: "3.11"
 
     steps:
       - uses: actions/checkout@v3
         with:
           lfs: true
 
-      - name: Get latest python version
-        id: get_python_version
-        run: |
-          echo "::set-output name=python_version::$(grep -Po '(?<=^python = ")[^"]*' pyproject.toml)"
-
       - uses: actions/setup-python@v5
         with:
-          python-version: ${{ steps.get_python_version.outputs.python_version }}
+          python-version: ${{ env.python-version }}
 
       - name: Install Poetry
         uses: snok/install-poetry@v1
@@ -78,7 +75,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .venv
-          key: venv-${{ steps.get_python_version.outputs.python_version }}-${{ hashFiles('poetry.lock') }}
+          key: venv-${{ env.python-version }}-${{ hashFiles('poetry.lock') }}
 
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
