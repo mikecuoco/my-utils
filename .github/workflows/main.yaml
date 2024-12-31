@@ -136,7 +136,7 @@ jobs:
           yq -i '.context.version = "${{ env.version }}"' '${{ env.file }}'
           yq -i '.source.url = "${{ steps.upload_release_asset.outputs.browser_download_url }}"' '${{ env.file }}'
           sha=$(sha256sum dist/myutils-${{ env.version }}.tar.gz | cut -d ' ' -f 1)
-          yq -i ".source.sha256 = \"${sha}\"" '${{ env.file }}'
+          yq -i ".source.sha256 = $sha" '${{ env.file }}'
 
     - name: Commit changes
       run: |
@@ -145,3 +145,10 @@ jobs:
         git add recipe.yaml
         git commit -m "Update recipe.yaml with new release"
         git push
+
+    - name: Build conda package
+      uses: prefix-dev/rattler-build-action@v0.2.25
+      with:
+        recipe_path: recipe.yaml
+        upload_artifact: true
+        build-args: -c bioconda -c conda-forge
