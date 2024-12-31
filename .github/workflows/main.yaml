@@ -146,23 +146,16 @@ jobs:
           with:
             lfs: true
 
-        - name: Download release
-          uses: robinraju/release-downloader@v1
-          with:
-            latest: true
-            fileName: "*.tar.gz"
-            tarBall: false
-            zipBall: false
-
         - name: Update recipe.yaml
           uses: mikefarah/yq@master
           env:
             file: conda.recipe/recipe.yaml
           with:
             cmd: |
+              wget ${{ needs.build_release.outputs.browser_download_url }} -O myutils.tar.gz
               yq -i '.context.version = "${{ needs.build_release.outputs.version }}"' '${{ env.file }}'
               yq -i '.source.url = "${{ needs.build_release.outputs.browser_download_url }}"' '${{ env.file }}'
-              yq -i '.source.sha256 = "${{ hashFiles('myutils*tar.gz') }}"' '${{ env.file }}'
+              yq -i '.source.sha256 = "${{ hashFiles('myutils.tar.gz') }}"' '${{ env.file }}'
 
         - name: Build conda package
           uses: prefix-dev/rattler-build-action@v0.2.25
