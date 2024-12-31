@@ -136,7 +136,8 @@ jobs:
           yq -i '.context.version = "${{ env.version }}"' '${{ env.file }}'
           yq -i '.source.url = "${{ steps.upload_release_asset.outputs.browser_download_url }}"' '${{ env.file }}'
           sha=$(sha256sum dist/myutils-${{ env.version }}.tar.gz | cut -d ' ' -f 1)
-          yq -i ".source.sha256 = "${sha}"" '${{ env.file }}'
+          echo "sha=$sha" >> $GITHUB_ENV
+          yq -i '.source.sha256 = "${{ env.sha }}"' '${{ env.file }}'
 
     - name: Commit changes
       run: |
