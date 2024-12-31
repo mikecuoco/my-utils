@@ -149,8 +149,8 @@ jobs:
       - name: Download asset
         uses: actions/download-artifact@v3
         with:
-          path: myutils-${{ needs.build_release.version }}.tar.gz
-          name: myutils-${{ needs.build_release.version }}.tar.gz
+          path: myutils-${{ needs.build_release.outputs.version }}.tar.gz
+          name: myutils-${{ needs.build_release.outputs.version }}.tar.gz
 
       - name: Update recipe.yaml
         uses: mikefarah/yq@master
@@ -158,8 +158,8 @@ jobs:
           file: conda.recipe/recipe.yaml
         with:
           cmd: |
-            yq -i '.context.version = "${{ needs.build_release.version }}"' '${{ env.file }}'
-            yq -i '.source.url = "${{ needs.build_release.browser_download_url }}"' '${{ env.file }}'
+            yq -i '.context.version = "${{ needs.build_release.outputs.version }}"' '${{ env.file }}'
+            yq -i '.source.url = "${{ needs.build_release.outputs.browser_download_url }}"' '${{ env.file }}'
             yq -i '.source.sha256 = "${{ hashFiles('myutils*tar.gz') }}"' '${{ env.file }}'
 
       - name: Commit changes
