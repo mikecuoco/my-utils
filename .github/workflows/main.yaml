@@ -24,17 +24,22 @@ jobs:
       uses: snok/install-poetry@v1
       with:
         version: 1.6.1
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+        virtualenvs-path: .venv
+        installer-parallel: true
 
-    - name: Set up cache
-      uses: actions/cache@v3
+    - name: Load venv cache
+      id: cached-poetry-dependencies
+      uses: actions/cache@v4
       with:
         path: .venv
-        key: venv-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('poetry.lock') }}
+        key: venv-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
 
     - name: Install dependencies
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: |
-        poetry config virtualenvs.in-project true
-        poetry install
+        poetry install --no-root
 
     - name: Run Tests
       run: |
@@ -49,10 +54,23 @@ jobs:
       with:
         lfs: true
 
+    - name: Get latest python version
+      id: get_python_version
+      run: |
+        echo "::set-output name=python_version::$(grep -Po '(?<=^python = ")[^"]*' pyproject.toml)"
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ steps.get_python_version.outputs.python_version }}
+
     - name: Install Poetry
       uses: snok/install-poetry@v1
       with:
         version: 1.6.1
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+        virtualenvs-path: .venv
+        installer-parallel: true
 
     - name: Reuse setup from previous job
       run: |
