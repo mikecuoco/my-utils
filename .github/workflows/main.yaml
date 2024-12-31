@@ -48,6 +48,9 @@ jobs:
   build_release:
     runs-on: ubuntu-latest
     needs: setup_test
+    outputs:
+      browser_download_url: ${{ steps.set_output.outputs.browser_download_url }}
+      version: ${{ steps.set_output.outputs.version }}
 
     steps:
     - uses: actions/checkout@v3
@@ -128,7 +131,10 @@ jobs:
         asset_content_type: application/gzip
 
     - name: Set Output for URL
-      run: echo "browser_download_url=${{ steps.upload_release_asset.outputs.browser_download_url }}" >> $GITHUB_ENV
+      id: set_output
+      run: |
+        echo "::set-output browser_download_url=${{ steps.upload_release_asset.outputs.browser_download_url }}"
+        echo "::set-output version=${{ env.version }}"
 
   conda_build_publish:
       runs-on: ubuntu-latest
@@ -143,8 +149,8 @@ jobs:
       - name: Download asset
         uses: actions/download-artifact@v3
         with:
-          name: myutils-${{ env.version }}.tar.gz
-          path: myutils-${{ env.version }}.tar.gz
+          path: myutils-${{ needs.build_release.version }}.tar.gz
+          name: myutils-${{ needs.build_release.version }}.tar.gz
 
       - name: Update recipe.yaml
         uses: mikefarah/yq@master
@@ -152,8 +158,8 @@ jobs:
           file: conda.recipe/recipe.yaml
         with:
           cmd: |
-            yq -i '.context.version = "${{ env.version }}"' '${{ env.file }}'
-            yq -i '.source.url = "${{ env.browser_download_url }}"' '${{ env.file }}'
+            yq -i '.context.version = "${{ needs.build_release.version }}"' '${{ env.file }}'
+            yq -i '.source.url = "${{ needs.build_release.browser_download_url }}"' '${{ env.file }}'
             yq -i '.source.sha256 = "${{ hashFiles('myutils*tar.gz') }}"' '${{ env.file }}'
 
       - name: Commit changes
