@@ -153,7 +153,7 @@ jobs:
         build-args: -c bioconda -c conda-forge --target-platform noarch
 
     - name: Upload conda package
-    - run: |
+      run: |
         for pkg in $(find output -type f \( -name "*.conda" -o -name "*.tar.bz2" \) ); do
           echo "Uploading ${pkg}"
           rattler-build upload prefix -c mikecuoco "${pkg}"
