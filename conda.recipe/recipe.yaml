@@ -8,19 +8,19 @@ source:
   sha256: "ea8ccfac2262023cb16d451273b0d578655cc358f338bec7e8064e8493a28ff8"
 build:
   noarch: python
-  script: poetry install --no-dev
+  script: |
+    poetry build
+    pip install dist/*.tar.gz
 requirements:
-  # note that there is no build section
   host:
-    - pip
     - poetry
+    - pip
     - python =3.10
-    - setuptools
-    - wheel
   run:
+    - python =3.10
     - pandas>=2
     - numpy>=2
-    - pyranges==0.0.124
+    - pyranges>=0.1.2
     - anndata>=0.9.2
 
 tests:
