@@ -152,7 +152,7 @@ jobs:
             file: conda.recipe/recipe.yaml
           with:
             cmd: |
-              wget ${{ needs.build_release.outputs.browser_download_url }} -O myutils.tar.gz
+              curl ${{ needs.build_release.outputs.browser_download_url }} > myutils.tar.gz
               yq -i '.context.version = "${{ needs.build_release.outputs.version }}"' '${{ env.file }}'
               yq -i '.source.url = "${{ needs.build_release.outputs.browser_download_url }}"' '${{ env.file }}'
               yq -i '.source.sha256 = "${{ hashFiles('myutils.tar.gz') }}"' '${{ env.file }}'
