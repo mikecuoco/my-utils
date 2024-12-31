@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "myutils"
-version = "0.1.0"
+version = "0.1.1"
 description = "My convenience utilities"
 authors = ["mikecuoco <mcuoco@ucsd.edu>"]
 license = "MIT"
@@ -27,7 +27,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 # https://github.com/psf/black
-target-version = ["py310"]
+target-version = ["py311"]
 line_length = 88
 color = true
 
@@ -49,7 +49,7 @@ exclude = '''
 
 [tool.isort]
 # https://github.com/timothycrosley/isort/
-py_version = 310
+py_version = 311
 line_length = 88
 
 known_typing = [
