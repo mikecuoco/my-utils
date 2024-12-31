@@ -95,29 +95,13 @@ jobs:
         run: |
           poetry build
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Create and upload release
+        run:
+          gh release create ${{ github.run_number }} dist/* --notes "Release ${{ env.version }}" --title "Release ${{ env.version }}"
+          url=$(gh api /repos/${{ github.repository }}/releases/tags/${{ github.run_number }} | jq -r '.assets[].browser_download_url')
+          echo "browser_download_url=$url" >> $GITHUB_ENV
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.run_number }}
-          release_name: Release ${{ env.version }}
-          body: |
-            This release contains the built package from Poetry.
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Asset
-        id: upload_release_asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/myutils-${{ env.version }}.tar.gz
-          asset_name: myutils-${{ env.version }}.tar.gz
-          asset_content_type: application/gzip
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update recipe.yaml
         uses: mikefarah/yq@master
@@ -126,8 +110,8 @@ jobs:
         with:
           cmd: |
             yq -i '.context.version = "${{ env.version }}"' '${{ env.file }}'
-            yq -i '.source.url = "${{ steps.upload_release_asset.outputs.browser_download_url }}"' '${{ env.file }}'
-            yq -i ".source.sha256 = \"$(sha256sum dist/myutils-${{ env.version }}.tar.gz | cut -d' ' -f1)\"" '${{ env.file }}'
+            yq -i '.source.url = "${{ env.browser_download_url }}"' '${{ env.file }}'
+            yq -i '.source.sha256 = "${{ hashFiles('dist/myutils*tar.gz') }}"' '${{ env.file }}'
 
       - name: Build conda package
         uses: prefix-dev/rattler-build-action@v0.2.25
