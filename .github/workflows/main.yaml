@@ -119,7 +119,7 @@ jobs:
       - name: Build conda package
         uses: prefix-dev/rattler-build-action@v0.2.25
         with:
-          build-args: -c bioconda -c conda-forge
+          build-args: -c conda-forge -c bioconda
 
       - name: Upload conda package
         run: |
