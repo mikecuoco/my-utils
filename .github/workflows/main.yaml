@@ -130,7 +130,7 @@ jobs:
     - name: Update recipe.yaml
       uses: mikefarah/yq@master
       env:
-        file: recipe.yaml
+        file: conda.recipe/ecipe.yaml
       with:
         cmd: |
           yq -i '.context.version = "${{ env.version }}"' '${{ env.file }}'
@@ -150,6 +150,12 @@ jobs:
     - name: Build conda package
       uses: prefix-dev/rattler-build-action@v0.2.25
       with:
-        recipe_path: recipe.yaml
-        upload_artifact: true
-        build-args: -c bioconda -c conda-forge
+        build-args: -c bioconda -c conda-forge --target-platform noarch
+
+    - run: |
+        for pkg in $(find output -type f \( -name "*.conda" -o -name "*.tar.bz2" \) ); do
+          echo "Uploading ${pkg}"
+          rattler-build upload prefix -c my-channel "${pkg}"
+        done
+      env:
+        PREFIX_API_KEY: ${{ secrets.PREFIX_API_KEY }}
