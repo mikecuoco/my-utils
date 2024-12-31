@@ -1,4 +1,4 @@
-name: CI/CD Workflow
+name: CI/CD
 
 on:
   push:
@@ -61,7 +61,7 @@ jobs:
         VERSION=$(grep -Po '(?<=^version = ")[^"]*' pyproject.toml)
         echo "version=$VERSION" >> $GITHUB_ENV
 
-    - name: Build
+    - name: Build python package
       run: |
         poetry build
 
@@ -88,3 +88,21 @@ jobs:
         asset_path: dist/myutils-${{ env.version }}.tar.gz
         asset_name: myutils-${{ env.version }}.tar.gz
         asset_content_type: application/gzip
+
+    - name: Update recipe.yaml
+      uses: mikefarah/yq@master
+      env:
+        file: recipe.yaml
+      with:
+        cmd: |
+          yq -i '.context.version = "${{ env.version }}"' '${{ env.file }}'
+          yq -i '.source.url = "${{ steps.upload_release_asset.outputs.browser_download_url }}"' '${{ env.file }}'
+          sha=$(sha256sum dist/myutils-${{ env.version }}.tar.gz | cut -d ' ' -f 1)
+          yq -i '.source.sha256 = "${sha}"' '${{ env.file }}'
+
+    - name: Commit changes
+      run: |
+        git config --global user.email "
+        git config --global user.name "GitHub Actions"
+        git add recipe.yaml
+        git commit -m "Update recipe.yaml with new release"
