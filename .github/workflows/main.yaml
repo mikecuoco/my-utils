@@ -130,7 +130,7 @@ jobs:
     - name: Update recipe.yaml
       uses: mikefarah/yq@master
       env:
-        file: conda.recipe/ecipe.yaml
+        file: conda.recipe/recipe.yaml
       with:
         cmd: |
           yq -i '.context.version = "${{ env.version }}"' '${{ env.file }}'
@@ -152,6 +152,7 @@ jobs:
       with:
         build-args: -c bioconda -c conda-forge --target-platform noarch
 
+    - name: Upload conda package
     - run: |
         for pkg in $(find output -type f \( -name "*.conda" -o -name "*.tar.bz2" \) ); do
           echo "Uploading ${pkg}"
