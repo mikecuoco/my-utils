@@ -1,6 +1,6 @@
 name: Test-Build-Release
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   main:
@@ -15,7 +15,7 @@ jobs:
         lfs: true
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -35,6 +35,12 @@ jobs:
         poetry config virtualenvs.in-project true
         poetry install --with dev
 
+    - name: Extract version from pyproject.toml
+      id: extract_version
+      run: |
+        VERSION=$(grep -Po '(?<=^version = ")[^"]*' pyproject.toml)
+        echo "version=$VERSION" >> $GITHUB_ENV
+
     - name: Tests
       run: |
         poetry run pytest
@@ -49,8 +55,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ env.version }}
+        release_name: Release ${{ env.version }}
         body: |
           This release contains the built package from Poetry.
         draft: false
