@@ -57,6 +57,7 @@ jobs:
           echo "draft=false" >> $GITHUB_ENV
         else
           echo "draft=true" >> $GITHUB_ENV
+        fi
 
     - name: Create Release
       id: create_release
