@@ -150,7 +150,7 @@ jobs:
     - name: Build conda package
       uses: prefix-dev/rattler-build-action@v0.2.25
       with:
-        build-args: -c bioconda -c conda-forge --target-platform noarch
+        build-args: -c bioconda -c conda-forge
 
     - name: Upload conda package
       run: |
