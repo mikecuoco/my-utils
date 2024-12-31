@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  setup_and_tests:
+  setup_test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -45,9 +45,9 @@ jobs:
       run: |
         poetry run pytest
 
-  build_and_release:
+  build_release_conda:
     runs-on: ubuntu-latest
-    needs: setup_and_tests
+    needs: setup_test
 
     steps:
     - uses: actions/checkout@v3
