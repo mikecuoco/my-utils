@@ -49,6 +49,11 @@ jobs:
       with:
         lfs: true
 
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: 1.6.1
+
     - name: Reuse setup from previous job
       run: |
         poetry config virtualenvs.in-project true
