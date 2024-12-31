@@ -4,7 +4,7 @@ package:
   name: myutils
   version: ${{ version }}
 source:
-  url: https://github.com/mikecuoco/myutils/releases/download/untagged-7fa157f3f79720514769/myutils-0.1.0.tar.gz
+  url: https://github.com/mikecuoco/myutils/releases/download/untagged-83efe991b54157b16ebd/myutils-0.1.0.tar.gz
   sha256: ""
 build:
   noarch: python
