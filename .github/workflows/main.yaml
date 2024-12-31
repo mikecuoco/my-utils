@@ -97,7 +97,7 @@ jobs:
 
       - name: Create and upload release
         run:
-          gh release create ${{ github.run_number }} dist/* --notes "Release ${{ env.version }}" --title "Release ${{ env.version }}"
+          gh release create ${{ github.run_number }} dist/*tar.gz --notes "Release ${{ env.version }}" --title "Release ${{ env.version }}"
           url=$(gh api /repos/${{ github.repository }}/releases/tags/${{ github.run_number }} | jq -r '.assets[].browser_download_url')
           echo "browser_download_url=$url" >> $GITHUB_ENV
         env:
