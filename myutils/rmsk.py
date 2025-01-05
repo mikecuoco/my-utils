@@ -4,59 +4,65 @@ from math import log
 import numpy as np
 import pandas as pd
 
+logger = logging.getLogger(__name__)
 
 # From https://github.com/MarioniLab/CELLOseq/blob/93ce4f3b86014df9348abab3fc2bcaa9620c3ff4/manuscript/python_files/calculate_TE_JCage.py
 # To calculate the TE age in million years of age (mya), we multiply the JC distance using the following formula:
 # (JC_distance * 100) / (subsitution_rate * 2 * 100) * 1000
 # For subsitution rate, we used 2.2 and 4.5 for human and mouse, according to Lander et al., 2001 and Waterston et al., 2002, respectively.
 # Jukes-Cantor evolutionary distance https://en.wikipedia.org/wiki/Models_of_DNA_evolution#JC69_model_(Jukes_and_Cantor_1969)
+# made it vectorized
 def calculate_age(milli_div, subsitution_rate=2.2):
-    p = (
-        milli_div / 1000
-    )  # The milliDiv column in the `rmsk.txt` file. Used to calculate proportion of sites that differ between this seq and the consensus seq
+    """
+    Vectorized calculation of evolutionary age (million years).
+    """
+    p = milli_div / 1000  # Proportion of sites differing
     p_part = (4 / 3) * p
-    jc_dist = -0.75 * (log(1 - p_part))
+    # Handle potential issues with log(0) by masking invalid values
+    jc_dist = np.where(p_part < 1, -0.75 * np.log(1 - p_part), np.nan)
     mya = (jc_dist * 100) / (subsitution_rate * 2 * 100) * 1000
     return mya
 
 
-def has_promoter(x):
+def has_promoter(df, L1_cutoff=125, Alu_cutoff=4, SVA_cutoff=50):
     """
-    test if rmsk element has a promoter
+    Vectorized promoter status calculation.
     only works for human
     """
+    conditions = [
+        (df["repFamily"] == "L1")
+        & (df["strand"] == "+")
+        & (df["repStart"] <= L1_cutoff),
+        (df["repFamily"] == "L1")
+        & (df["strand"] == "-")
+        & (df["repLeft"] <= L1_cutoff),
+        (df["repFamily"] == "Alu")
+        & (df["strand"] == "+")
+        & (df["repStart"] <= Alu_cutoff),
+        (df["repFamily"] == "Alu")
+        & (df["strand"] == "-")
+        & (df["repLeft"] <= Alu_cutoff),
+        (df["repFamily"] == "SVA")
+        & (df["strand"] == "+")
+        & (df["repStart"] <= SVA_cutoff),
+        (df["repFamily"] == "SVA")
+        & (df["strand"] == "-")
+        & (df["repLeft"] <= SVA_cutoff),
+    ]
+    return np.select(conditions, [True] * len(conditions), default=False)
 
-    if x.repFamily == "L1":
-        thresh = 125
-    elif x.repFamily == "Alu":
-        thresh = 70
-    elif x.repFamily == "SVA":
-        thresh = 70
-    else:
-        return np.nan
 
-    if x.strand == "+":
-        return x.repStart < thresh
-    elif x.strand == "-":
-        return x.repLeft < thresh
-
-
-def is_full_length(x):
+def is_full_length(df, L1_cutoff=6000, Alu_cutoff=267, SVA_cutoff=1336):
     """
-    test if rmsk element is full length
+    Vectorized full-length status calculation.
     only works for human
     """
-
-    if x.repFamily == "L1":
-        thresh = 6000
-    elif x.repFamily == "Alu":
-        thresh = 250
-    elif x.repFamily == "SVA":
-        thresh = 600
-    else:
-        return np.nan
-
-    return x.length > thresh
+    conditions = [
+        (df["repFamily"] == "L1") & (df["repEnd"] >= L1_cutoff),
+        (df["repFamily"] == "Alu") & (df["repEnd"] >= Alu_cutoff),
+        (df["repFamily"] == "SVA") & (df["repEnd"] >= SVA_cutoff),
+    ]
+    return np.select(conditions, [True] * len(conditions), default=False)
 
 
 def read_rmsk(filename: str):
@@ -72,23 +78,14 @@ def read_rmsk(filename: str):
     ]:
         assert w in line, f"Not a valid rmsk file: {w} not found in first line"
 
+    logger.info(f"Reading RepeatMasker file: {filename}")
+
     # setup converter functions
     strand_conv = lambda x: "-" if x == "C" else "+"
     coord_conv = lambda x: int(x.rstrip(")").lstrip("("))
     perc_conv = lambda x: float(x) * 10
 
-    convs = {
-        "milliDiv": perc_conv,
-        "milliDel": perc_conv,
-        "milliIns": perc_conv,
-        "genoLeft": coord_conv,
-        "strand": strand_conv,
-        "repStart": coord_conv,
-        "repLeft": coord_conv,
-    }
-
     # read the rmsk file
-    logging.info(f"Reading RepeatMasker file: {filename}")
     df = pd.read_csv(
         filename,
         skiprows=3,
@@ -110,7 +107,15 @@ def read_rmsk(filename: str):
             "repLeft",
             "id",
         ],
-        converters=convs,
+        converters={
+            "milliDiv": perc_conv,
+            "milliDel": perc_conv,
+            "milliIns": perc_conv,
+            "genoLeft": coord_conv,
+            "strand": strand_conv,
+            "repStart": coord_conv,
+            "repLeft": coord_conv,
+        },
         engine="python",
         on_bad_lines=lambda x: x[:-1],
     )
@@ -124,21 +129,22 @@ def read_rmsk(filename: str):
     df.drop("repClassFamily", axis=1, inplace=True)
 
     # calculate length of each repeat
-    df["length"] = df.apply(
-        lambda x: x["repEnd"] - x["repLeft"]
-        if x["strand"] == "-"
-        else x["repEnd"] - x["repStart"],
-        axis=1,
+    logger.info("Calculating length of each repeat")
+    df["length"] = np.where(
+        df["strand"] == "+", df["repEnd"] - df["repStart"], df["repEnd"] - df["repLeft"]
     )
 
     # calculate age of each repeat
-    logging.info("Calculating evolutionary age of each repeat")
-    df["age"] = df["milliDiv"].apply(calculate_age)
+    logger.info("Calculating evolutionary age of each repeat")
+    df["age"] = calculate_age(df["milliDiv"])
 
     # calculate promoter status
-    logging.info("Calculating promoter status of L1 and Alu repeats")
-
-    df["has_promoter"] = df.apply(has_promoter, axis=1)
-    df["is_full_length"] = df.apply(is_full_length, axis=1)
+    logger.info(
+        "Calculating full-length and promoter status of L1, Alu, and SVA repeats"
+    )
+    df["has_promoter"] = has_promoter(df)
+    df["has_promoter"] = df["has_promoter"].astype(bool)
+    df["is_full_length"] = is_full_length(df)
+    df["is_full_length"] = df["is_full_length"].astype(bool)
 
     return df
