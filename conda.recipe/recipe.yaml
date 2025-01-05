@@ -9,11 +9,12 @@ source:
 build:
   noarch: python
   script: |
+    poetry install --no-dev
     poetry build
     pip install dist/*.tar.gz
 requirements:
   host:
-    - poetry
+    - poetry-core >= 1.0.0
     - pip
     - python>=3.10,<3.12
   run:
@@ -26,5 +27,7 @@ tests:
   - python:
       imports:
         - myutils
+      pip_check: true
+
 about:
   homepage: https://github.com/mikecuoco/myutils

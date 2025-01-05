@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "myutils"
-version = "0.1.1"
+version = "0.1.2"
 description = "My convenience utilities"
 authors = ["mikecuoco <mcuoco@ucsd.edu>"]
 license = "MIT"
@@ -20,6 +20,10 @@ black = "^23.3.0"
 pre-commit = "^3.2.1"
 pytest = "^7.2.2"
 isort = "^5.12.0"
+jupyterlab = "^4.3.0"
+seaborn = "^0.13.2"
+tqdm = "^4.62.3"
+ipywidgets = "^7.6.5"
 
 [build-system]
 requires = ["poetry-core"]
