@@ -1,11 +1,11 @@
 context:
-  version: "0.1.1"
+  version: "0.1.2"
 package:
   name: myutils
   version: ${{ version }}
 source:
-  url: https://github.com/mikecuoco/myutils/releases/download/106/myutils-0.1.1.tar.gz
-  sha256: "bc2ff79cdc9e6839febe8cb3783167609c7161d664cb3b3a478d815952204067"
+  url: https://github.com/mikecuoco/myutils/releases/download/107/myutils-0.1.2.tar.gz
+  sha256: "8127eb4e7d62f537e32b93c1c7656c6722d1f63d11640c78f3334503445ad106"
 build:
   noarch: python
   script: |
@@ -28,6 +28,5 @@ tests:
       imports:
         - myutils
       pip_check: true
-
 about:
   homepage: https://github.com/mikecuoco/myutils
